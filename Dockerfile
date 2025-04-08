@@ -22,3 +22,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Set the Apache user and group
 RUN sed -i 's/www-data:x:33:33:/www-data:x:1000:1000:/' /etc/passwd
+
+# Apply PHP upload limits using environment variables
+RUN echo "upload_max_filesize=${UPLOAD_MAX_FILESIZE}" > /usr/local/etc/php/conf.d/uploads.ini && \
+    echo "post_max_size=${POST_MAX_SIZE}" >> /usr/local/etc/php/conf.d/uploads.ini
