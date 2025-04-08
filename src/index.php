@@ -47,12 +47,13 @@ try {
 
     if (move_uploaded_file($file['tmp_name'], $destination)) {
         // File successfully uploaded, now process it with Camelot
-        $camelot = Camelot::lattice($destination);
-        $camelot->pages('2')->save($destination . '.csv');
-
-        // Read the CSV file and return its contents
-        $csvContent = file_get_contents($destination . '.csv');
-        echo json_encode(['status' => 'success', 'message' => 'File received successfully', 'data' => $csvContent]);
+        $camelot = Camelot::stream($destination);
+        $output = $camelot->pages('842')->save($destination . '.csv');
+        echo json_encode(['data' => $output]);
+/*
+        // Read the csv file and return its contents
+        $csvContent = file_get_contents('uploads/' . $destination . '.csv');
+        echo json_encode(['status' => 'success', 'message' => 'File received successfully', 'data' => $csvContent]);*/
     } else {
         throw new Exception('Error saving the file: ' . error_get_last()['message']);
     }

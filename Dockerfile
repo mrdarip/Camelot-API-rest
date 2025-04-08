@@ -44,5 +44,12 @@ RUN echo "upload_max_filesize=${UPLOAD_MAX_FILESIZE}" > /usr/local/etc/php/conf.
 RUN apt-get update && apt-get install -y python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Ghostscript
+RUN apt-get update && apt-get install -y ghostscript && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install camelot-py[base] with --break-system-packages
 RUN pip3 install "camelot-py[base]" --break-system-packages
+
+# Install the ghostscript Python package with --break-system-packages
+RUN pip3 install ghostscript --break-system-packages
