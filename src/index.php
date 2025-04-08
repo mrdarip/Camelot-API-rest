@@ -50,10 +50,11 @@ try {
         $camelot = Camelot::stream($destination);
         $output = $camelot->pages('842')->save($destination . '.csv');
         echo json_encode(['data' => $output]);
-/*
+        /*
         // Read the csv file and return its contents
         $csvContent = file_get_contents('uploads/' . $destination . '.csv');
-        echo json_encode(['status' => 'success', 'message' => 'File received successfully', 'data' => $csvContent]);*/
+        echo json_encode(['status' => 'success', 'message' => 'File received successfully', 'data' => $csvContent]);
+        */
     } else {
         throw new Exception('Error saving the file: ' . error_get_last()['message']);
     }
