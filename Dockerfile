@@ -6,6 +6,13 @@ RUN a2enmod rewrite
 # Install PHP extensions
 RUN docker-php-ext-install fileinfo
 
+# Install required tools for Composer
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -26,3 +33,9 @@ RUN sed -i 's/www-data:x:33:33:/www-data:x:1000:1000:/' /etc/passwd
 # Apply PHP upload limits using environment variables
 RUN echo "upload_max_filesize=${UPLOAD_MAX_FILESIZE}" > /usr/local/etc/php/conf.d/uploads.ini && \
     echo "post_max_size=${POST_MAX_SIZE}" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Install Camelot PHP library
+RUN composer require randomstate/camelot-php
