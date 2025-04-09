@@ -53,17 +53,30 @@ try {
         // File successfully uploaded, now process it with Camelot
         $camelot = Camelot::stream($destination);
         $output = $camelot->pages($_POST['pages'])->save($destination . '.csv');
-        echo json_encode(['data' => $output]);
+
+        // Collect all CSV content and structure it as JSON
+        $pages = [];
+        foreach (glob($destination . '-page-*-table-*.csv') as $csvFile) {
+            $pageData = [];
+            if (($handle = fopen($csvFile, 'r')) !== false) {
+                while (($row = fgetcsv($handle)) !== false) {
+                    $pageData[] = $row;
+                }
+                fclose($handle);
+            }
+            $pages[] = $pageData;
+        }
 
         // Clean up: delete the uploaded file after processing
         if (file_exists($destination)) {
-            //echo "Deleting the uploaded file: $destination\n";
             unlink($destination);
         }
         foreach (glob($destination . '-page-*-table-*.csv') as $csvFile) {
-            //echo "Deleting the output CSV file: $csvFile\n";
             unlink($csvFile);
         }
+
+        // Return the JSON response
+        echo json_encode(['pages' => $pages]);
     } else {
         throw new Exception('Error saving the file: ' . error_get_last()['message']);
     }
@@ -72,3 +85,16 @@ try {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'received unsuccessfully', 'error' => $e->getMessage()]);
 }
+
+
+/*
+
+use RandomState\Camelot\Camelot;
+use League\Csv\Reader;
+
+$tables = Camelot::lattice('/path/to/my/file.pdf')
+       ->extract();
+
+$csv = Reader::createFromString($tables[0]);
+$allRecords = $csv->getRecords();
+*/
