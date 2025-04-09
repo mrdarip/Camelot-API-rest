@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./src/uploads:/var/www/html/uploads
+      - ./src/uploads:/tmp/uploads
     environment:
       - UPLOAD_MAX_FILESIZE=100M
       - POST_MAX_SIZE=100M

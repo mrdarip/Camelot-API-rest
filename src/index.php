@@ -17,6 +17,10 @@ try {
     if (!isset($_FILES['pdf_file'])) {
         throw new Exception('No file was uploaded');
     }
+    // check if the page form part is set
+    if (!isset($_POST['pages'])) {
+        throw new Exception('No pages form part was set');
+    }
 
     $file = $_FILES['pdf_file'];
     
@@ -30,7 +34,7 @@ try {
     }
 
     // Define upload directory with absolute path
-    $uploadDir = '/var/www/html/uploads/';
+    $uploadDir = '/tmp/uploads/';
 
     // Generate unique filename
     $filename = uniqid() . '.pdf';
@@ -48,7 +52,7 @@ try {
     if (move_uploaded_file($file['tmp_name'], $destination)) {
         // File successfully uploaded, now process it with Camelot
         $camelot = Camelot::stream($destination);
-        $output = $camelot->pages('842')->save($destination . '.csv');
+        $output = $camelot->pages($_POST['pages'])->save($destination . '.csv');
         echo json_encode(['data' => $output]);
         /*
         // Read the csv file and return its contents

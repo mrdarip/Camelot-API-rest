@@ -19,13 +19,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Create uploads directory with proper permissions
-RUN mkdir -p /var/www/html/src/uploads && \
-    chown -R www-data:www-data /var/www/html && \
-    chmod -R 775 /var/www/html
-
 # Copy application files
 COPY src/ /var/www/html/
+
+RUN mkdir -p /tmp/uploads
 
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader
