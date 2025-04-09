@@ -54,11 +54,16 @@ try {
         $camelot = Camelot::stream($destination);
         $output = $camelot->pages($_POST['pages'])->save($destination . '.csv');
         echo json_encode(['data' => $output]);
-        /*
-        // Read the csv file and return its contents
-        $csvContent = file_get_contents('uploads/' . $destination . '.csv');
-        echo json_encode(['status' => 'success', 'message' => 'File received successfully', 'data' => $csvContent]);
-        */
+
+        // Clean up: delete the uploaded file after processing
+        if (file_exists($destination)) {
+            //echo "Deleting the uploaded file: $destination\n";
+            unlink($destination);
+        }
+        foreach (glob($destination . '-page-*-table-*.csv') as $csvFile) {
+            //echo "Deleting the output CSV file: $csvFile\n";
+            unlink($csvFile);
+        }
     } else {
         throw new Exception('Error saving the file: ' . error_get_last()['message']);
     }
