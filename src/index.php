@@ -34,7 +34,7 @@ try {
     }
 
     // Define upload directory with absolute path
-    $uploadDir = '/tmp/uploads/';
+    $uploadDir = '/tmp/';
 
     // Generate unique filename
     $filename = uniqid() . '.pdf';
