@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/./vendor/autoload.php';
 
 use RandomState\Camelot\Camelot;
+use RandomState\Camelot\Areas;
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -23,7 +24,7 @@ try {
     }
 
     $file = $_FILES['pdf_file'];
-    
+
     // Validate file type
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mimeType = finfo_file($finfo, $file['tmp_name']);
@@ -51,7 +52,10 @@ try {
 
     if (move_uploaded_file($file['tmp_name'], $destination)) {
         // File successfully uploaded, now process it with Camelot
-        $camelot = Camelot::stream($destination);
+        $camelot = Camelot::stream($destination)->inAreas(
+            Areas::from(0,842,595,0)
+        );
+
         $output = $camelot->pages($_POST['pages'])->save($destination . '.csv');
 
         // Collect all CSV content and structure it as JSON
@@ -80,7 +84,6 @@ try {
     } else {
         throw new Exception('Error saving the file: ' . error_get_last()['message']);
     }
-
 } catch (Exception $e) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'received unsuccessfully', 'error' => $e->getMessage()]);
